@@ -13,6 +13,6 @@ for i in range(len(repos)):
     repos_list.append(repos[i].get('name'))
 
 with open('task1.json', 'w') as f:
-    json.dump(repos_list, f)
+    json.dump(repos_list, f, indent=1)
 
 print(repos_list)
