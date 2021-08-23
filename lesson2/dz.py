@@ -38,7 +38,7 @@ while page <= page_count:
             for i in range(len(product.find_all('div', attrs={'class':'right'}))):
                 rating_list_p.append(int(product.find_all('div', attrs={'class':'right'})[i].text))
 
-            rating = str(rating_list_p).strip('[]')
+            rating = rating_list_p
             rating_list_p = []
 
             link = url + product.find('a')['href']
