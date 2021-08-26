@@ -7,7 +7,7 @@ import pandas as pd
 import sys
 from pymongo import MongoClient
 
-client = MongoClient('127.0.0.1', 27017,  username='Admin', password='3%@Artur')
+client = MongoClient('127.0.0.1', 27017) #,  username='Admin', password='3%@Artur')
 db = client['roscontrol']
 
 products_db = db['products_db']
@@ -34,8 +34,8 @@ product_lst = []
 
 while page <= page_count:
     params = {'keyword':find.encode(encoding='utf-8'), 'page': page}
-    responce = requests.get(url + '/testlab/search', params=params, headers=headers)
-    soup = bs(responce.text, 'html.parser')
+    response = requests.get(url + '/testlab/search', params=params, headers=headers)
+    soup = bs(response.text, 'html.parser')
     products = soup.find_all('div', attrs={'class':'wrap-product-catalog__item'})
 
     if len(products) == 0:
@@ -71,7 +71,25 @@ while page <= page_count:
     page += 1
     if len(products) < 12:
         page = page_count + 1
+try:
+    rate_val = int(input('Введите мин значение общей оценки для вывода: '))
+except:
+    print('!!!Введите целое число!!!')
+    sys.exit()
 
-for i in products_db.find({}):
-    print(i)
+try:
+    raing_val = int(input('Введите мин значение качества для вывода: '))
+except:
+    print('!!!Введите целое число!!!')
+    sys.exit()
+
+for item in products_db.find():
+    if item['rate'] >= rate_val:
+        print(item)
+    elif item['rating'][3] >= raing_val:
+        print(item)
+
+
+# for i in products_db.find({}):
+#     print(i)
 
