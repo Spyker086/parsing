@@ -7,7 +7,7 @@ import pandas as pd
 import sys
 from pymongo import MongoClient
 
-client = MongoClient('127.0.0.1', 27017) #,  username='Admin', password='3%@Artur')
+client = MongoClient('127.0.0.1', 27017)
 db = client['roscontrol']
 
 products_db = db['products_db']
@@ -47,7 +47,10 @@ while page <= page_count:
         for product in products:
             product_data = {}
             name = product.find('div', attrs={'class':'product__item-link'}).text
-            rate = int(product.find('div', attrs={'class':'rate'}).text)
+            try:
+                rate = int(product.find('div', attrs={'class':'rate'}).text)
+            except:
+                rate = 'NULL'
 
             for i in range(len(product.find_all('div', attrs={'class':'right'}))):
                 rating_list_p.append(int(product.find_all('div', attrs={'class':'right'})[i].text))
@@ -78,18 +81,10 @@ except:
     sys.exit()
 
 try:
-    raing_val = int(input('Введите мин значение качества для вывода: '))
+    rating_val = int(input('Введите мин значение качества для вывода: '))
 except:
     print('!!!Введите целое число!!!')
     sys.exit()
 
-for item in products_db.find():
-    if item['rate'] >= rate_val:
-        print(item)
-    elif item['rating'][3] >= raing_val:
-        print(item)
-
-
-# for i in products_db.find({}):
-#     print(i)
-
+for item in products_db.find({'$or': [{'rate': {'$gte': rate_val}}, {'rating.3': {'$gte': rating_val}}]}):
+    print(item)
